@@ -4,8 +4,10 @@ from sqlalchemy import select
 from src.models import Vehicle
 from src.utils import get_json_body, validate_course_body, get_error
 from src.constants import ERRORS
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app)
 
 app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///disney_dream_parade.db"
 
@@ -69,7 +71,7 @@ def update_vehicle(id: int):
     if validation_error:
             return get_error(validation_error)
     
-    # Là aussi, il faut vérifier que le véhicule à modifier n'a pas la même position dans la parade qu'un véhicule déjà existant
+    # Là aussi, il faut vérifier que le véhicule à modifier ne va pas occuper la même position dans la parade qu'un véhicule déjà existant
     vehicles_positions = db.session.scalars(select(Vehicle.position)).all()
     if body["position"] in vehicles_positions:
         return get_error("POSITION_ERROR")
